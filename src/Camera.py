@@ -49,7 +49,7 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
 
 
         image, results = mediapipe_detection(frame, holistic)
-        print(results)
+        print(image)
         
 
         draw_styled_landmarks(image, results)
