@@ -10,10 +10,10 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, random_split
 from torch.utils.tensorboard import SummaryWriter
 import torchvision.transforms as transforms
-from models.Conv3D import r2plus1d_18
-from dataset_sign_clip import Sign_Isolated
+from models.Resnet2plus1d import r2plus1d_18
+from dataset_sign import Sign_Isolated
 from train import train_epoch
-from validation_clip import val_epoch
+from validation import val_epoch
 from collections import OrderedDict
 
 class LabelSmoothingCrossEntropy(nn.Module):
