@@ -57,20 +57,17 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 # Hyperparams
-num_classes = 226 #100
+num_classes = 226 
 epochs = 100
-# batch_size = 16
 batch_size = 24
-learning_rate = 1e-5#1e-4 Train 1e-5 Finetune
+learning_rate = 1e-3#1e-3 Train 1e-4 Finetune
+weight_decay = 1e-4 #1e-4
 log_interval = 80
 sample_size = 128
 sample_duration = 32
 attention = False
 drop_p = 0.0
 hidden1, hidden2 = 512, 256
-num_workers = 12
-
-
 
 def get_lr(optimizer):
     for param_group in optimizer.param_groups:
