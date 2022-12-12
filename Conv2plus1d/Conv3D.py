@@ -9,18 +9,18 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, random_split
 from torch.utils.tensorboard import SummaryWriter
 import torchvision.transforms as transforms
-from models.Conv3D import CNN3D, resnet18, resnet34, resnet50, resnet101, r2plus1d_18
+from models.Resnet2plus1d import r2plus1d_18
 from dataset_sign import Sign_Isolated
 from train import train_epoch
 from validation import val_epoch
 
 exp_name = 'sign_train'
-data_path = "../bitirme_dateset/train/train"
+data_path = "../bitirme_dateset/train/train/train_set_vfbha39.zip/train"
 data_path2 = "../bitirme_dataset/validation/val"
-label_train_path = "bitirme_dataset/train/train_labels.csv"
-label_val_path = "bitirme_dataset/validation/validation_labels/ground_truth.csv"
+label_train_path = "../bitirme_dataset/train/train_labels.csv"
+label_val_path = "../bitirme_dataset/validation/validation_labels/ground_truth.csv"
 model_path = "checkpoint/{}".format(exp_name)
-log_path = "log/sign_resnet2d+1_{}_{:%Y-%m-%d_%H-%M-%S}.log".format(exp_name, datetime.now())
+log_path = "log/sign_resnet2d+1.log".format(exp_name, datetime.now())
 sum_path = "runs/sign_resnet2d+1_{}_{:%Y-%m-%d_%H-%M-%S}".format(exp_name, datetime.now())
 
 logging.basicConfig(level=logging.INFO, format='%(message)s', handlers=[logging.FileHandler(log_path), logging.StreamHandler()])
@@ -31,6 +31,7 @@ writer = SummaryWriter(sum_path)
 # Use specific gpus
 os.environ["CUDA_VISIBLE_DEVICES"]="2"
 # Device setting
+#device = torch.device("cuda")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Hyperparams
@@ -62,9 +63,9 @@ if __name__ == '__main__':
     # Create model
     # model = CNN3D(sample_size=sample_size, sample_duration=sample_duration, drop_p=drop_p,
     #             hidden1=hidden1, hidden2=hidden2, num_classes=num_classes).to(device)
-    model = resnet18(pretrained=True, progress=True, sample_size=sample_size, sample_duration=sample_duration,
-                    attention=attention, num_classes=num_classes).to(device)
-    # model = r2plus1d_18(pretrained=True, num_classes=num_classes).to(device)
+    #model = resnet18(pretrained=True, progress=True, sample_size=sample_size, sample_duration=sample_duration,
+                    #attention=attention, num_classes=num_classes).to(device)
+    model = r2plus1d_18(pretrained=True, num_classes=num_classes).to(device)
     # Run the model parallelly
     if torch.cuda.device_count() > 1:
         logger.info("Using {} GPUs".format(torch.cuda.device_count()))
