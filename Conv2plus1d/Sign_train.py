@@ -30,18 +30,21 @@ class LabelSmoothingCrossEntropy(nn.Module):
 
 # Path setting
 exp_name = 'sign_train'
-data_path = "../bitirme_dateset/train/train"
+data_path = "C:/Users/serha/SignLanguage/bitirme_dataset/train/minicik_train/"
+#data_path = "../bitirme_dataset/train/minicik_train/"
+#data_path = "../bitirme_dataset/train/train_set_vfbha39/train/"
 data_path2 = "../bitirme_dataset/validation/val"
-label_train_path = "bitirme_dataset/train/train_labels.csv"
-label_val_path = "bitirme_dataset/validation/validation_labels/ground_truth.csv"
+label_train_path = "../bitirme_dataset/train/label.csv"
+label_val_path = "../bitirme_dataset/validation/validation_labels/ground_truth.csv"
+model_path = "checkpoint/{}".format(exp_name)
+log_path = "log/sign_resnet2d+1.log".format(exp_name, datetime.now())
+sum_path = "runs/sign_resnet2d+1_{}_{:%Y-%m-%d_%H-%M-%S}".format(exp_name, datetime.now())
 model_path = "checkpoint/{}".format(exp_name)
 if not os.path.exists(model_path):
     os.mkdir(model_path)
 if not os.path.exists(os.path.join('results', exp_name)):
     os.mkdir(os.path.join('results', exp_name))
-log_path = "log/sign_resnet2d+1_{}_{:%Y-%m-%d_%H-%M-%S}.log".format(exp_name, datetime.now())
-sum_path = "runs/sign_resnet2d+1_{}_{:%Y-%m-%d_%H-%M-%S}".format(exp_name, datetime.now())
-phase = 'Test'
+phase = 'Train'
 # Log to file & tensorboard writer
 logging.basicConfig(level=logging.INFO, format='%(message)s', handlers=[logging.FileHandler(log_path), logging.StreamHandler()])
 logger = logging.getLogger('SLR')
