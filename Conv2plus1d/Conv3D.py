@@ -15,9 +15,9 @@ from train import train_epoch
 from validation import val_epoch
 
 exp_name = 'sign_train'
-data_path = "../bitirme_dateset/train/train/train_set_vfbha39.zip/train"
+data_path = "../bitirme_dataset/train/minicik_train"
 data_path2 = "../bitirme_dataset/validation/val"
-label_train_path = "../bitirme_dataset/train/train_labels.csv"
+label_train_path = "../bitirme_dataset/train/label.csv"
 label_val_path = "../bitirme_dataset/validation/validation_labels/ground_truth.csv"
 model_path = "checkpoint/{}".format(exp_name)
 log_path = "log/sign_resnet2d+1.log".format(exp_name, datetime.now())
@@ -58,8 +58,8 @@ if __name__ == '__main__':
     val_set = Sign_Isolated(data_path=data_path, label_path=label_val_path, frames=sample_duration,
         num_classes=num_classes, train=False, transform=transform)
     logger.info("Dataset samples: {}".format(len(train_set)+len(val_set)))
-    train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=16, pin_memory=True)
-    val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=True, num_workers=16, pin_memory=True)
+    train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=1, pin_memory=True)
+    val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=True, num_workers=1, pin_memory=True)
     # Create model
     # model = CNN3D(sample_size=sample_size, sample_duration=sample_duration, drop_p=drop_p,
     #             hidden1=hidden1, hidden2=hidden2, num_classes=num_classes).to(device)

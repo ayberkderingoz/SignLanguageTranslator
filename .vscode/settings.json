@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": [
+        "./Conv2plus1d"
+    ]
+}

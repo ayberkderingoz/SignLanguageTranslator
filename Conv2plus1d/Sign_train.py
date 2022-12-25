@@ -30,12 +30,12 @@ class LabelSmoothingCrossEntropy(nn.Module):
 
 # Path setting
 exp_name = 'sign_train'
-data_path = "C:/Users/serha/SignLanguage/bitirme_dataset/train/minicik_train/"
+data_path = "/Volumes/Seagate/bitirme_dataset/train/minicik_train/"
 #data_path = "../bitirme_dataset/train/minicik_train/"
 #data_path = "../bitirme_dataset/train/train_set_vfbha39/train/"
-data_path2 = "../bitirme_dataset/validation/val"
-label_train_path = "../bitirme_dataset/train/label.csv"
-label_val_path = "../bitirme_dataset/validation/validation_labels/ground_truth.csv"
+data_path2 = "/Volumes/Seagate/bitirme_dataset/validation/minicik_validation/"
+label_train_path = "/Volumes/Seagate/bitirme_dataset/train/first_five_word_list.csv"
+label_val_path = "/Volumes/Seagate/bitirme_dataset/validation/validation_labels/validation.csv"
 model_path = "checkpoint/{}".format(exp_name)
 log_path = "log/sign_resnet2d+1.log".format(exp_name, datetime.now())
 sum_path = "runs/sign_resnet2d+1_{}_{:%Y-%m-%d_%H-%M-%S}".format(exp_name, datetime.now())
@@ -60,17 +60,18 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 # Hyperparams
-num_classes = 226 
+num_classes = 226
 epochs = 100
-batch_size = 24
-learning_rate = 1e-3#1e-3 Train 1e-4 Finetune
+batch_size = 2
+learning_rate = 1e-4#1e-3 Train 1e-4 Finetune
 weight_decay = 1e-4 #1e-4
-log_interval = 80
-sample_size = 128
-sample_duration = 32
+log_interval = 20
+sample_size = 64
+sample_duration = 128
 attention = False
 drop_p = 0.0
 hidden1, hidden2 = 512, 256
+
 
 def get_lr(optimizer):
     for param_group in optimizer.param_groups:
@@ -87,8 +88,8 @@ if __name__ == '__main__':
     val_set = Sign_Isolated(data_path=data_path2, label_path=label_val_path, frames=sample_duration,
         num_classes=num_classes, train=False, transform=transform)
     logger.info("Dataset samples: {}".format(len(train_set)+len(val_set)))
-    train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=24, pin_memory=True)
-    val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=False, num_workers=24, pin_memory=True)
+    train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=2, pin_memory=True)
+    val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
     # Create model
 
     model = r2plus1d_18(pretrained=True, num_classes=500)
@@ -111,8 +112,8 @@ if __name__ == '__main__':
         logger.info("Using {} GPUs".format(torch.cuda.device_count()))
         model = nn.DataParallel(model)
     # Create loss criterion & optimizer
-    # criterion = nn.CrossEntropyLoss()
-    criterion = LabelSmoothingCrossEntropy()
+    criterion = nn.CrossEntropyLoss()
+    #criterion = LabelSmoothingCrossEntropy()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=10, threshold=0.0001)
 
@@ -120,10 +121,11 @@ if __name__ == '__main__':
     if phase == 'Train':
         logger.info("Training Started".center(60, '#'))
         for epoch in range(epochs):
+            print(epoch)
             print('lr: ', get_lr(optimizer))
             # Train the model
             train_epoch(model, criterion, optimizer, train_loader, device, epoch, logger, log_interval, writer)
-
+            
             # Validate the model
             val_loss = val_epoch(model, criterion, val_loader, device, epoch, logger, writer)
             scheduler.step(val_loss)
