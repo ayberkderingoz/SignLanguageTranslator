@@ -5,10 +5,11 @@ from torch.utils.data import Dataset
 import torchvision.transforms as transforms
 import random
 import numpy as np
-
+#import path
 """
 Implementation of Sign Language Dataset
 """
+ 
 class Sign_Isolated(Dataset):
     def __init__(self, data_path, label_path, frames=16, num_classes=226, train=True, transform=None, test_clips=5):
         super(Sign_Isolated, self).__init__()
@@ -28,7 +29,7 @@ class Sign_Isolated(Dataset):
             line = line.split(',')
 
             self.sample_names.append(line[0])
-            self.data_folder.append(os.path.join(data_path, line[0]))
+            self.data_folder.append(os.path.join(data_path+'train_frames', line[0]))
             self.labels.append(int(line[1]))
 
     def frame_indices_tranform(self, video_length, sample_duration):
@@ -64,19 +65,31 @@ class Sign_Isolated(Dataset):
         return i, j, i+output_size, j+output_size
 
     def read_images(self, folder_path, clip_no=0):
-        # assert len(os.listdir(folder_path)) >= self.frames, "Too few images in your data folder: " + str(folder_path)
+       # assert len(os.listdir(folder_path)) >= self.frames, "Too few images in your data folder: " + str(folder_path)
+        folder_path = folder_path.replace(os.sep, '/')
         images = []
+        start = 1
+        step = int(len(os.listdir(folder_path))/self.frames)
         if self.train:
-            index_list = self.frame_indices_tranform(len(os.listdir(folder_path)), self.frames)
+            #index_list = self.frame_indices_tranform(len(folder_path),self.frames)
+            index_list = self.frame_indices_tranform(len(os.listdir(folder_path))/2, self.frames)
             flip_rand = random.random()
             angle = (random.random() - 0.5) * 10
             crop_box = self.random_crop_paras(256, 224)
         else:
-            index_list = self.frame_indices_tranform_test(len(os.listdir(folder_path)), self.frames, clip_no)
+            index_list = self.frame_indices_tranform_test(len(os.listdir(folder_path))/2, self.frames, clip_no)
         
-        # for i in range(self.frames):
+        
+        #for i in range(self.frames):
         for i in index_list:
-            image = Image.open(os.path.join(folder_path, '{:04d}.jpg').format(i))
+            
+            i = int(i)
+            #print(folder_path)
+            folder = os.path.join(folder_path + "/{:04d}.jpg").format(i)
+            image = Image.open(folder)
+            #image = Image.open(os.path.join(folder_path, '{:04d}.jpg').format(i))
+            
+           
             if self.train:
                 if flip_rand > 0.5:
                     image = ImageOps.mirror(image)
@@ -97,6 +110,7 @@ class Sign_Isolated(Dataset):
         images = images.permute(1, 0, 2, 3)
         # print(images.shape)
         return images
+    
 
     def __len__(self):
         return len(self.data_folder)
@@ -104,6 +118,7 @@ class Sign_Isolated(Dataset):
     def __getitem__(self, idx):
         selected_folder = self.data_folder[idx]
         if self.train:
+            
             images = self.read_images(selected_folder)
         else:
             images = []

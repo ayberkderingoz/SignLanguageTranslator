@@ -30,12 +30,12 @@ class LabelSmoothingCrossEntropy(nn.Module):
 
 # Path setting
 exp_name = 'sign_train'
-data_path = "/Volumes/Seagate/bitirme_dataset/train/minicik_train/"
+data_path = "D:/bitirme_dataset/train/minicik_train/"
 #data_path = "../bitirme_dataset/train/minicik_train/"
 #data_path = "../bitirme_dataset/train/train_set_vfbha39/train/"
-data_path2 = "/Volumes/Seagate/bitirme_dataset/validation/minicik_validation/"
-label_train_path = "/Volumes/Seagate/bitirme_dataset/train/first_five_word_list.csv"
-label_val_path = "/Volumes/Seagate/bitirme_dataset/validation/validation_labels/validation.csv"
+data_path2 = "D:/bitirme_dataset/validation/val/"
+label_train_path = "D:/bitirme_dataset/train/first_five_word_list.csv"
+label_val_path = "D:/bitirme_dataset/validation/validation_labels/validation.csv"
 model_path = "checkpoint/{}".format(exp_name)
 log_path = "log/sign_resnet2d+1.log".format(exp_name, datetime.now())
 sum_path = "runs/sign_resnet2d+1_{}_{:%Y-%m-%d_%H-%M-%S}".format(exp_name, datetime.now())
@@ -62,12 +62,12 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # Hyperparams
 num_classes = 226
 epochs = 100
-batch_size = 2
-learning_rate = 1e-4#1e-3 Train 1e-4 Finetune
+batch_size = 3
+learning_rate = 1e-3#1e-3 Train 1e-4 Finetune
 weight_decay = 1e-4 #1e-4
 log_interval = 20
-sample_size = 64
-sample_duration = 128
+sample_size = 128
+sample_duration = 32
 attention = False
 drop_p = 0.0
 hidden1, hidden2 = 512, 256
