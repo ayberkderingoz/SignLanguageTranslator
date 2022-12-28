@@ -88,20 +88,20 @@ if __name__ == '__main__':
     val_set = Sign_Isolated(data_path=data_path2, label_path=label_val_path, frames=sample_duration,
         num_classes=num_classes, train=False, transform=transform)
     logger.info("Dataset samples: {}".format(len(train_set)+len(val_set)))
-    train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=2, pin_memory=True)
-    val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
+    train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=24, pin_memory=True)
+    val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=False, num_workers=24, pin_memory=True)
     # Create model
-
-    model = r2plus1d_18(pretrained=True, num_classes=500)
+    model = r2plus1d_18(pretrained=True, num_classes=226)
     # load pretrained
-    checkpoint = torch.load('pretrained/slr_resnet2d+1.pth')
+    checkpoint = torch.load('pretrained/sign_resnet2d+1_epoch100.pth')
+
     new_state_dict = OrderedDict()
     for k, v in checkpoint.items():
         name = k[7:] # remove 'module.'
         new_state_dict[name]=v
     model.load_state_dict(new_state_dict)
-    if phase == 'Train':
-        model.fc1 = nn.Linear(model.fc1.in_features, num_classes)
+    # if phase == 'Train':
+    #     model.fc1 = nn.Linear(model.fc1.in_features, num_classes)
     print(model)
 
 
@@ -112,20 +112,19 @@ if __name__ == '__main__':
         logger.info("Using {} GPUs".format(torch.cuda.device_count()))
         model = nn.DataParallel(model)
     # Create loss criterion & optimizer
-    criterion = nn.CrossEntropyLoss()
-    #criterion = LabelSmoothingCrossEntropy()
-    optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
+    # criterion = nn.CrossEntropyLoss()
+    criterion = LabelSmoothingCrossEntropy()
+    optimizer = optim.Adam(model.parameters(), lr=learning_rate)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=10, threshold=0.0001)
 
     # Start training
     if phase == 'Train':
         logger.info("Training Started".center(60, '#'))
         for epoch in range(epochs):
-            print(epoch)
             print('lr: ', get_lr(optimizer))
             # Train the model
             train_epoch(model, criterion, optimizer, train_loader, device, epoch, logger, log_interval, writer)
-            
+
             # Validate the model
             val_loss = val_epoch(model, criterion, val_loader, device, epoch, logger, writer)
             scheduler.step(val_loss)

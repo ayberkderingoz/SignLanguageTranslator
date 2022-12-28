@@ -72,17 +72,17 @@ class Sign_Isolated(Dataset):
         step = int(len(os.listdir(folder_path))/self.frames)
         if self.train:
             #index_list = self.frame_indices_tranform(len(folder_path),self.frames)
-            index_list = self.frame_indices_tranform(len(os.listdir(folder_path)), self.frames)
+            index_list = self.frame_indices_tranform(len(os.listdir(folder_path))/2, self.frames)
             flip_rand = random.random()
             angle = (random.random() - 0.5) * 10
             crop_box = self.random_crop_paras(256, 224)
         else:
-            index_list = self.frame_indices_tranform_test(len(os.listdir(folder_path)), self.frames, clip_no)
+            index_list = self.frame_indices_tranform_test(len(os.listdir(folder_path))/2, self.frames, clip_no)
         
         
         #for i in range(self.frames):
         for i in index_list:
-            
+            i = int(i)
             #print(folder_path)
             folder = os.path.join(folder_path + "/{:04d}.jpg").format(i)
             image = Image.open(folder)
