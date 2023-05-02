@@ -1,5 +1,6 @@
 {
     "python.analysis.extraPaths": [
-        "./Conv2plus1d"
+        "./Conv2plus1d",
+        "./Conv2plus1d/models"
     ]
 }
