@@ -450,7 +450,7 @@ for words,_ in enumerate(list_of_words):
     list_of_words_str += list_of_words[words] + " "
 #print(list_of_words_str)
 
-openai.api_key = "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"
+openai.api_key = "Your API Key here"
 
 prompt = """'{list_of_words_str}' cümlesi Türkçe kurallarına uygun değil.
  Bu cümleyi Türkçe kurallarına uygun bir hale getir. 
